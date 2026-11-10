@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Course en Cours · Maîtriser l’API Arduino</title>
+<style>
+:root{color-scheme:light;--paper:#eeebe8;--surface:#fcf9f6;--ink:#151923;--muted:#555c6b;--line:#dad5d2;--blue:#173de6;--blue-ink:#1833ad;--tint:#edf0ff;--amber:#fff0cf;--amber-ink:#69450a;--green:#e4f3e9;--green-ink:#225738;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.48 system-ui,-apple-system,sans-serif}
+button,select,textarea{font:inherit;color:inherit}
+button,select{min-height:44px}
+button{cursor:pointer}
+button:disabled{cursor:default;opacity:.6}
+button,summary,a,select,textarea{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+button{padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:#fff;font-weight:680;text-align:center}
+button:not(:disabled):hover{border-color:var(--blue)}
+.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.primary:not(:disabled):hover{background:#1231c1}
+.soft{background:#f1eeec}
+.compact{padding-inline:10px}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+a{color:var(--blue-ink)}
+h1,h2,h3,p{margin:0 0 .5rem}
+h1{font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.02;letter-spacing:-.057em;margin:.2rem 0 .75rem}
+h2{font-size:clamp(1.28rem,2.7vw,1.7rem);line-height:1.12;letter-spacing:-.031em}
+h3{font-size:1rem;line-height:1.23}
+code,pre{font-family:var(--mono)}
+code{font-size:.88em}
+.eyebrow{color:var(--muted);font:750 .72rem/1.4 var(--mono);text-transform:uppercase;letter-spacing:.085em;margin-bottom:.42rem}
+.wrap{width:min(100% - 28px,1080px);margin-inline:auto}
+.skip{position:absolute;top:-90px;left:8px;padding:10px;background:white;z-index:5}.skip:focus{top:8px}
+.top{border-bottom:1px solid #d9d5d2;background:#f8f5f3}
+.top .wrap{display:flex;align-items:center;gap:12px;justify-content:space-between;min-height:60px}
+.brand{display:flex;gap:9px;align-items:center;font-weight:800;letter-spacing:-.02em}
+.brand b{border-radius:7px;background:var(--ink);color:white;padding:5px 7px;font:700 .72rem var(--mono)}
+.top small{color:var(--muted)}
+main{padding:20px 0 34px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:11px}
+.steps button{background:#f9f6f3;text-align:left;padding:8px 11px;font-size:.91rem}
+.steps button[aria-current=step]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.steps small{font:700 .75rem var(--mono);margin-right:4px}
+.app{background:var(--surface);border:1px solid #ded8d4;border-radius:18px;padding:clamp(14px,3vw,28px);min-width:0}
+.intro{display:grid;grid-template-columns:1fr minmax(230px,.78fr);gap:26px;align-items:center}
+.mission{font-size:clamp(1.05rem,2.6vw,1.32rem);font-weight:740;background:#eeecf0;border-radius:11px;padding:12px 14px;margin-bottom:14px}
+.intro .primary{margin:8px 0 0}
+.intro-bench{background:#f5f1ee;border-radius:12px;overflow:hidden;padding:9px 10px 12px}
+.intro-bench img,.bench img{display:block;width:100%;height:auto;object-fit:contain}
+.caption{font-size:.85rem;color:var(--muted)}
+.stage-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:8px;margin-bottom:13px}
+.stage-head p:last-child{margin:0}
+.work{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px;align-items:start}
+.card{background:#fffdfa;border:1px solid var(--line);border-radius:13px;padding:13px;min-width:0}
+.card p:last-child{margin-bottom:0}
+.tree{margin-top:10px}
+.root{width:fit-content;max-width:100%;margin:0 auto;position:relative;border-radius:10px;border:1px solid var(--line);background:#f3efec;padding:8px 12px;text-align:center;overflow-wrap:anywhere}
+.root strong{display:block}
+.fork{height:21px;position:relative;margin-inline:24%}
+.fork::before{content:"";position:absolute;top:0;left:50%;height:11px;border-left:2px solid #9d9eaa}
+.fork::after{content:"";position:absolute;inset:10px 0 0;border:solid #9d9eaa;border-width:2px 2px 0;border-radius:7px 7px 0 0}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.branches button,.nodes button{text-align:left;overflow-wrap:anywhere}
+.branches button[aria-expanded=true],.nodes button[aria-pressed=true]{background:var(--tint);border-color:var(--blue);color:var(--blue-ink)}
+.nodes{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.nodes button strong,.nodes button code,.nodes button span{display:block}
+.nodes button code{margin:3px 0;font-size:.8rem;color:var(--ink)}
+.nodes button span{font-size:.79rem;color:var(--muted);font-weight:500}
+details{margin-top:8px}
+summary{display:list-item;min-height:44px;padding:10px 8px;font-weight:690;cursor:pointer}
+details.why{padding:0 8px 0 5px;border-radius:8px;background:var(--tint)}
+details.why p{padding:0 8px 10px;font-size:.9rem}
+.selected-why{font-size:.83rem;font-weight:500;color:var(--muted)}
+.selected-line{margin:8px 0 0;color:var(--muted);font-size:.85rem}
+.program{background:#f3f2f6;border-radius:9px;padding:8px 10px;overflow:auto;font:.81rem/1.5 var(--mono);margin:8px 0;max-height:265px;white-space:pre-wrap;overflow-wrap:anywhere}
+.program code{font-size:inherit}
+.program .accent{color:var(--blue-ink);font-weight:700}
+.program-actions{margin:8px 0}
+.palette{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0}
+.palette button{text-align:left;overflow-wrap:anywhere}
+.palette button span{display:block;font-size:.78rem;font-weight:540;color:var(--muted)}
+.destination label{display:block;font-weight:680}
+select{margin-top:4px;border:1px solid #8e8b9b;border-radius:8px;background:white;padding:8px;width:100%}
+.program-list{padding:0;list-style:none;margin:6px 0}
+.program-list li{display:flex;gap:7px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:6px 0}
+.program-list li code{overflow-wrap:anywhere}
+.line-actions{display:flex;gap:3px;flex:none}
+.line-actions button{min-width:44px;padding:4px;font-size:.82rem}
+.subtle{font-size:.86rem;color:var(--muted)}
+.bench{margin-top:12px}
+.bench-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:13px;align-items:center}
+.bench-picture{background:#f5f1ee;border-radius:11px;padding:8px;min-width:0}
+.bench figcaption{padding:0 4px;font-size:.8rem;color:var(--muted)}
+.bench-picture[data-running=true]{box-shadow:inset 0 0 0 2px #659776;background:#e6f0e8}
+figure{margin:0}
+.readouts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{display:inline-block;padding:5px 9px;border-radius:7px;background:#eeecea;font-size:.84rem;font-weight:650}
+.chip.running{background:var(--green);color:var(--green-ink)}
+.result{padding:8px 10px;border-radius:8px;background:#eeecea;font-size:.91rem;margin:8px 0 0;min-height:40px}
+.result[data-kind=warn]{background:var(--amber);color:var(--amber-ink)}
+.result[data-kind=good]{background:var(--green);color:var(--green-ink)}
+.log{margin:0;padding-left:25px;font-size:.86rem}
+.log li{padding:4px 0}
+.foot{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-top:14px}
+.form-label{display:block;font-weight:700;margin:8px 0 4px}
+textarea{width:100%;padding:9px;border:1px solid #8e8b9b;border-radius:8px;resize:vertical}
+.trace{margin-top:11px}
+.feedback{font-size:.85rem;color:var(--muted);margin:7px 0}
+.feedback:empty{display:none}
+@media(max-width:710px){.intro,.work,.bench-grid{grid-template-columns:1fr}.intro{gap:14px}.intro-bench{max-width:480px}.stage-head{align-items:start}.top small{font-size:.76rem}}
+@media(max-width:390px){.wrap{width:calc(100% - 16px)}.steps button{padding-inline:6px;font-size:.8rem}.steps small{margin-right:2px}.card{padding:10px}.nodes button,.branches button,.palette button{padding-inline:6px}.line-actions{gap:2px}}
+@media print{.top,.steps,.work,.bench,.foot,.trace button{display:none!important}.app{border:0}.wrap{width:100%}.print-task{display:block!important}}
+.labnav{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:6px;margin-bottom:10px}
+.labnav button{font-size:.86rem;text-align:left;padding:7px 8px}
+.labnav button[aria-current=step]{background:var(--ink);color:#fff}
+.labnav small{display:block;font:.75rem var(--mono);opacity:.83}
+.labnav button[data-done=true]{box-shadow:inset 0 -3px #64a87b}
+#lab-head{margin-bottom:14px}
+#lab-head h1{font-size:clamp(1.8rem,4vw,3rem)}
+#stage-description{max-width:67ch}
+.progress-summary{font-size:.82rem;color:var(--muted);margin:4px 0 9px}
+.module-note{padding:10px 13px;background:var(--tint);border-radius:9px;color:var(--blue-ink)}
+.tree .branches{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}
+.nodes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.nodes button{min-width:0;overflow-wrap:anywhere}
+.action-panel{margin-top:9px;border-top:1px solid var(--line);padding-top:10px}
+.action-panel code,.history-note code{overflow-wrap:anywhere}
+.params{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+.params label{flex:1 1 105px;font-size:.84rem;font-weight:700}
+.params select,.params input{display:block;min-height:44px;width:100%;margin-top:3px;padding:6px;border-radius:7px;border:1px solid #8e8b9b;background:#fff;font:inherit;color:inherit}
+#bench-controls{margin-top:7px}
+#bench-controls:empty{display:none}
+.lab-fig{background:#f5f1ee;padding:6px;border-radius:9px}
+.lab-fig img{display:block;width:100%;height:auto}
+.lab-fig figcaption{padding:4px;font-size:.78rem;color:var(--muted)}
+#motor[data-on=true]{background:var(--green);color:var(--green-ink)}
+.result{min-height:0}
+.values{margin:6px 0 0;display:grid;gap:4px}
+.values div{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--line);padding:4px 0;font-size:.86rem}
+.values dt{overflow-wrap:anywhere}
+.values dd{margin:0;font-weight:700;flex:none}
+.history-note{margin-top:9px}
+.history-note li{overflow-wrap:anywhere}
+#lab-proof{border-top:1px solid var(--line);margin-top:13px;padding-top:10px}
+#lab-proof[data-done=true]{color:var(--green-ink)}
+#bilan{margin-top:14px}
+#reference{margin-top:14px}
+#reference summary{font-weight:800}
+#ref-search{margin:4px 0 8px;width:100%;padding:8px;border:1px solid #8e8b9b;border-radius:8px;min-height:44px;font:inherit}
+.ref-entry{margin:0;border-top:1px solid var(--line)}
+.ref-entry p{padding:0 8px}
+.ref-entry summary{overflow-wrap:anywhere}
+.ref-entry code{color:var(--blue-ink)}
+@media(max-width:530px){.labnav{grid-template-columns:repeat(3,minmax(0,1fr))}.labnav button{min-width:0;overflow-wrap:anywhere}.tree .branches{grid-template-columns:repeat(2,minmax(0,1fr))}.nodes button{padding-inline:7px}}
+@media(max-width:330px){.nodes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Aller à l’activité</a>
+<header class="top"><div class="wrap"><div class="brand"><b>CeC</b> Course en Cours</div><small>Arduino · Atelier 02</small></div></header>
+<main id="main" class="wrap">
+  <header id="lab-head"><p class="eyebrow">Première STI2D · API UART V5 · 2 séances de 50 min</p><h1>Maîtriser l’API Arduino</h1><p id="stage-description">Relie l’Arduino, pilote le dragster et défends tes choix à partir du journal d’essai.</p><p class="subtle">Séance 1 · Relier, configurer, piloter. Séance 2 · Mesurer, dialoguer, diagnostiquer et relever le défi. Chaque atelier ouvre un banc neuf.</p></header>
+  <nav id="labnav" class="labnav" aria-label="Ateliers"></nav>
+  <p id="progress-summary" class="progress-summary"></p>
+  <article class="app">
+    <header class="stage-head"><div><p class="eyebrow" id="lab-pages"></p><h2 id="lab-title" tabindex="-1"></h2><p id="lab-mission"></p></div></header>
+    <div class="work">
+      <section class="card" aria-labelledby="actions-title">
+        <h3 id="actions-title">Arbre des décisions</h3>
+        <div class="tree">
+          <div class="root"><strong id="root-title"></strong><small id="root-note"></small></div>
+          <div class="fork" aria-hidden="true"></div>
+          <div id="branches" class="branches" role="group" aria-label="Branches"></div>
+          <div id="nodes" class="nodes" role="group" aria-label="Actions de la branche"></div>
+        </div>
+        <section id="action-panel" class="action-panel" aria-labelledby="action-title" hidden>
+          <h3 id="action-title" tabindex="-1"></h3>
+          <p><code id="action-code"></code></p>
+          <form id="action-form">
+            <div id="params" class="params"></div>
+            <button id="do-action" type="submit" class="primary">Exécuter sur le banc</button>
+          </form>
+          <details class="why" id="why"><summary>Pourquoi ?</summary><p id="why-text"></p></details>
+        </section>
+        <details class="why" id="lab-hint"><summary>Un indice pour cet atelier</summary><p id="lab-hint-text"></p></details>
+      </section>
+      <section class="card" aria-labelledby="bench-title">
+        <h3 id="bench-title">Banc d’essai virtuel</h3>
+        <figure class="lab-fig"><img src="data:image/webp;base64,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" width="500" height="125" alt="Dragster miniature et Arduino sur le banc"><figcaption>Mesures fictives · Simulation du dialogue Arduino–dragster</figcaption></figure>
+        <div id="bench-controls" class="actions"></div>
+        <div class="readouts" aria-label="États du banc">
+          <span id="api" class="chip"></span><span id="motor" class="chip"></span><span id="session" class="chip"></span><span id="clock" class="chip"></span>
+        </div>
+        <p id="result" class="result" role="status" aria-atomic="true"></p>
+        <dl id="values" class="values"></dl>
+        <details id="journal" class="history-note"><summary>Journal d’essai</summary><ol id="events" class="log"></ol></details>
+        <div class="actions"><button type="button" id="restart" class="soft">Réinitialiser le banc</button></div>
+      </section>
+    </div>
+    <p id="lab-proof" class="subtle" role="status"></p>
+    <div class="foot"><button type="button" id="prev" class="soft">Atelier précédent</button><button type="button" id="next" class="primary">Atelier suivant</button></div>
+    <section id="bilan" class="card" aria-labelledby="bilan-title">
+      <h3 id="bilan-title">Mon bilan</h3>
+      <p id="question"></p>
+      <label class="form-label" for="response">Mon observation et mon explication</label>
+      <textarea id="response" rows="3" maxlength="1500" placeholder="Cite un résultat ou un événement du journal, puis explique ce qu’il montre."></textarea>
+      <button type="button" id="export" class="soft">Télécharger mon bilan</button>
+      <p id="export-info" class="feedback" role="status"></p>
+    </section>
+  </article>
+  <details id="reference" class="card">
+    <summary>Répertoire des fonctions et des codes de retour</summary>
+    <label for="ref-search" class="form-label">Rechercher une fonction, une commande UART ou une notion</label>
+    <input id="ref-search" type="search" placeholder="Ex. getTele, START ou moteur">
+    <p id="ref-count" class="subtle" role="status"></p>
+    <div id="ref-items"></div>
+  </details>
+  <p id="save-info" class="feedback" role="status"></p>
+  <p class="subtle">Source · Guide CeC <em>Tuto Arduino : piloter par l’API série</em>, p. 3–11. Pour un essai réel avec le kit, respecte la consigne du guide : roues en l’air et contrôle du montage avec ton enseignant.</p>
+  <noscript><p>Active JavaScript pour manipuler le banc. Sur papier, annote les échanges INIT, START et STOP dans le guide technique, puis prépare une chronologie d’essai.</p></noscript>
+</main>
+<script>
+'use strict';
+const labs = [
+  {title:'Relier', section:'Liaison UART', pages:'p. 3–5', mission:'Câble virtuellement l’Arduino UNO et obtiens une réponse OK PONG.', objective:'Une liaison série vérifiée avant toute commande moteur.', hints:'Identifie la broche qui émet sur chaque appareil. Les masses doivent être communes. Le moniteur série de l’ordinateur utilise un débit distinct.', groups:[['Préparer',['begin','timeout']],['Vérifier',['ping','echo','purge']]]},
+  {title:'Configurer', section:'Configuration', pages:'p. 5–6', mission:'Lis la configuration, demande un diamètre de 65 mm, vérifie la valeur relue puis sauvegarde.', objective:'Distinguer la valeur demandée, la valeur appliquée et la valeur sauvegardée.', hints:'Dans ce banc, les bornes de diamètre sont réglées à 56 et 62 mm. Après modification, actualise le cache avant de relire.', groups:[['Lire',['config','configValue']],['Modifier',['setConfig','saveConfig']]]},
+  {title:'Piloter', section:'Cycle moteur', pages:'p. 6', mission:'Ouvre une session. Démarre à 10 %, passe à 20 %, fais une pause, reprends le mouvement, puis arrête le moteur et ferme la session.', objective:'Distinguer moteur au neutre et session fermée.', hints:'Observe séparément les deux états du banc. Pour reprendre après une pause, envoie une nouvelle demande de mouvement.', groups:[['Démarrer et varier',['start','move','speed']],['Interrompre et terminer',['pause','neutral','stop']]]},
+  {title:'Mesurer', section:'Télémétrie et bilan', pages:'p. 6–7', mission:'Fais un essai de 2 s à 10 %. Compare deux lectures espacées, relis la plus ancienne mesure et relève la distance dans le bilan.', objective:'Distinguer mesure fraîche, mesure en cache et bilan de fin.', hints:'La télémétrie avance avec le temps virtuel. Actualise-la avant chaque comparaison. Termine la session pour obtenir le bilan.', groups:[['Conduire l’essai',['start','move','tick','neutral','stop']],['Acquérir et lire',['tele','teleValues','teleStructure']],['Relire et conclure',['count','block','summary','summaryValues','summaryStructure']]]},
+  {title:'Dialoguer', section:'Événements du dragster', pages:'p. 7–10', mission:'Traite INIT et START, lance le moteur, puis déclenche et traite un STOP externe. Observe qui coupe le moteur.', objective:'Distinguer le geste du pilote, la réponse de la bibliothèque et la décision du programme.', hints:'Les actions du dragster sont dans le bloc Banc d’essai. Côté Arduino, appelle poll() pour traiter chaque message puis lis le drapeau utile.', groups:[['Traiter et lire',['poll','takeStart','takeStop']],['Réagir',['start','move','tele','tick','neutral','stop','summary']],['Approfondir',['callbacks']]]},
+  {title:'Diagnostiquer', section:'Codes de retour', pages:'p. 10–11', mission:'Compare un port non prêt, un silence UART et une commande moteur refusée. Identifie la première vérification à faire dans chaque cas.', objective:'Interpréter le niveau de l’erreur avant de corriger.', hints:'Le code de retour de la bibliothèque et le code ERR du dragster sont deux informations différentes.', groups:[['Reproduire',['ping','move']],['Lire le diagnostic',['errCode','errText','rawRace','rawEstop']]]},
+  {title:'Défi', section:'Essai autonome', pages:'p. 8–10', mission:'Réalise un départ à la gâchette, une course virtuelle à 10 % pendant 2 s, une mesure fraîche, puis une fin normale et la lecture du bilan.', objective:'Passer du geste au résultat et justifier la séquence avec le journal.', hints:'Le banc commence en Prêt. Les commandes sont à ta disposition. Garde une observation qui prouve que tu as terminé la session.', groups:[['Commandes à ta disposition',['summary','poll','speed','move','takeStop','stop','tele','start','takeStart','neutral','summaryValues','tick']]]}
+];
+
+const actions = {
+  begin:['Préparer le port','cecSerial.begin(9600);','Ouvre le port série du dragster.','Sur l’UNO, SoftwareSerial(2, 4) indique RX sur D2 et TX sur D4. La liaison attend 9 600 bauds en 8N1 et une masse commune.'],
+  timeout:['Régler le délai de réponse','cec.setTimeoutMs(ms);','Fixe le temps maximal d’attente.','Le guide indique 1 500 ms par défaut. Ce délai concerne une réponse série. Il est distinct de la durée maximale de la course.'],
+  ping:['Tester la liaison','cec.getInfoConnex();','Envoie PING et attend OK PONG.','Un retour 0 confirme la réponse. Un silence peut venir d’un mauvais câblage ou d’un mauvais débit. Le code -5 signale un port série non prêt.'],
+  echo:['Basculer l’écho','cec.setEcho(mode);','Active ou désactive l’écho.','SET_ECHO ON ou OFF facilite le diagnostic des échanges. Cette méthode est déclarée void dans le tableau des contrats.'],
+  purge:['Identifier PURGE','cec.purge();','Associe l’appel à la commande PURGE.','Le tableau V5 donne la correspondance PURGE et la signature void. Le guide fourni ne détaille pas ici les effets de cette commande.'],
+  config:['Actualiser la configuration','cec.getConfig();','Recharge le cache de configuration.','Après une modification, relance getConfig() pour vérifier la valeur appliquée avant de lire le cache.'],
+  configValue:['Lire une clé','cec.getConfigValue("clé");','Lit la clé choisie dans le cache.','Le diamètre de roue sert au calcul de la vitesse et de la distance dans tous les modes. Les réglages AUTO concernent la course en mode AUTO.'],
+  setConfig:['Modifier une clé','cec.setConfigValue(clé, valeur);','Demande une nouvelle valeur.','Le dragster borne le diamètre aux limites réglées. La clé direction reste à 0. En mode API, choisis la consigne avec moveStart() ou moveSpeed().'],
+  saveConfig:['Sauvegarder la configuration','cec.sendConfig();','Sauvegarde les réglages sur la carte SD.','SEND_CONFIG sauvegarde la configuration. Le bilan et l’enregistrement de la course relèvent de la fermeture de session.'],
+  start:['Ouvrir la session','cec.start(0);','Prépare le dragster, moteur au neutre.','En mode API, start(0) ouvre la session. Un argument positif écrit auto_duration_s sans fixer la durée du mouvement API.'],
+  move:['Démarrer le moteur','cec.moveStart(0, consigne);','Demande un mouvement à la consigne choisie.','Une session doit être ouverte. Le premier paramètre est ignoré par le dragster pour cette commande. Utilise 0 ici.'],
+  speed:['Changer la consigne','cec.moveSpeed(consigne);','Modifie la consigne pendant le mouvement.','La consigne est exprimée en pourcentage. La vitesse mesurée est une grandeur distincte.'],
+  neutral:['Mettre au neutre','cec.moveStop(tps);','Arrête le moteur et garde la session ouverte.','Pour moveStop() et movePause(), la bibliothèque attend tps millisecondes côté Arduino avant d’envoyer la commande.'],
+  pause:['Mettre en pause','cec.movePause(tps);','Met le moteur au neutre temporairement.','La session reste ouverte. Une nouvelle commande moveStart() permet de reprendre. Le délai tps est appliqué côté Arduino.'],
+  stop:['Fermer la session','cec.stop();','Termine l’essai et calcule le bilan.','Le dragster ferme la session, calcule le bilan et sauvegarde la course. Le guide déclare cette méthode void.'],
+  tick:['Avancer le temps','delay(200);','Fait avancer le banc de 200 ms.','CecTriggerFlow espace ses mesures d’environ 200 ms et appelle régulièrement poll() pour traiter les événements.'],
+  tele:['Acquérir une mesure fraîche','cec.getTele();','Demande la mesure la plus récente.','Vérifie le retour avant de lire les getters. Les getters seuls relisent la dernière mesure chargée.'],
+  teleValues:['Lire les quatre getters','getTele…()', 'Affiche temps, vitesse, distance et tension.','Le temps est en ms, la vitesse en m/s, la distance en m et la tension en V. Les valeurs affichées sont celles de la mesure chargée.'],
+  teleStructure:['Ouvrir la structure de mesure','cec.telemetry();','Accède aux champs de télémétrie détaillés.','Le guide cite le courant, la puissance, l’énergie, le régime, l’état de charge, les accélérations et la consigne limitée. Les valeurs du banc sont fictives.'],
+  count:['Compter les mesures','cec.getNbBloc();','Compte les mesures disponibles dans l’historique.','Le dragster garde environ 7 à 8 secondes de mesures pendant une session API.'],
+  block:['Relire une mesure indexée','cec.getBloc(i);','Charge une mesure de l’historique.','L’index 1 désigne la plus ancienne, et 0 la plus récente. Lis ensuite les mêmes getters que pour getTele().'],
+  summary:['Acquérir le bilan','cec.getBilan();','Charge le résumé de la course terminée.','Le parcours normal du guide appelle getBilan() après stop(). Une fin imposée par le dragster calcule aussi un bilan côté véhicule.'],
+  summaryValues:['Lire les cinq getters','getBil…()','Affiche durée, vitesses, distance et énergie.','La durée est en ms, les vitesses en m/s, la distance en m et l’énergie en Wh.'],
+  summaryStructure:['Ouvrir la structure du bilan','cec.bilan();','Accède aux champs détaillés du bilan.','Le guide cite max_current_a, max_power_w, min_voltage_v et frame_count.'],
+  poll:['Traiter les messages','cec.poll();','Lit les événements et envoie les réponses.','La bibliothèque répond READY à INIT, START_ACK à START et STOP_ACK à STOP. Sur le matériel, les triggers peuvent aussi être traités pendant une commande. Le banc les isole dans poll() pour rendre la chronologie visible.'],
+  takeStart:['Lire le signal de départ','cec.takeStartTrigger();','Renvoie true une fois après START traité.','Le programme peut alors ouvrir la session et lancer sa séquence de course. Lire ce drapeau consomme l’événement.'],
+  takeStop:['Lire le signal d’arrêt','cec.takeStopTrigger();','Renvoie true après un STOP traité.','Le dragster a déjà coupé le moteur. Utilise ce résultat pour quitter la boucle de course.'],
+  callbacks:['Examiner les rappels','onInit() · onStart() · onStop()','Associe un rappel à un événement.','Garde un rappel court. Le guide demande d’agir depuis loop() avec les drapeaux plutôt que d’envoyer une commande dans un rappel.'],
+  errCode:['Lire le code du dragster','cec.lastProtocolErrorCode();','Récupère le numéro ERR après un retour -3.','Le code -3 vient de la bibliothèque. Le code ERR 3 vient du dragster et signifie mauvais état.'],
+  errText:['Lire le message associé','cec.lastErrorMessage();','Affiche le texte associé à l’erreur.','Après un retour -3, associe le message et le code protocole à la dernière commande envoyée.'],
+  rawRace:['Observer un diagnostic UART','GET_RACE','Repère un état dans une réponse texte.','Commande UART brute. Le guide donne l’exemple state=RUNNING,error=NONE. Elle est présentée ici à titre de lecture.'],
+  rawEstop:['Identifier l’arrêt d’urgence UART','ESTOP','Reconnais la commande UART brute.','ESTOP désigne l’arrêt d’urgence. Le guide fourni le cite en texte brut. Il est présenté ici comme commande à reconnaître.']
+};
+
+const teleFields = [
+  ['getTeleTimestampMs()', 'ms','Temps depuis le début de la session',m=>m.t],
+  ['getTeleSpeedMs()', 'm/s','Vitesse',m=>num(m.speed)],
+  ['getTeleDistanceM()', 'm','Distance',m=>num(m.distance,3)],
+  ['getTeleBatteryVoltage()', 'V','Tension',m=>num(m.voltage)]
+];
+const summaryFields = [
+  ['getBilDurationMs()','ms','Durée',m=>m.duration],
+  ['getBilMaxSpeedMs()','m/s','Vitesse maximale',m=>num(m.maxSpeed)],
+  ['getBilAvgSpeedMs()','m/s','Vitesse moyenne',m=>num(m.average)],
+  ['getBilTotalDistanceM()','m','Distance totale',m=>num(m.distance,3)],
+  ['getBilTotalEnergyWh()','Wh','Énergie totale',m=>num(m.energy,4)]
+];
+const configKeys = {
+  wheel_diameter_mm:[56,62,'mm'], auto_duration_s:[0.1,120,'s'], auto_throttle_pct:[0,100,'%'],direction:[0,0,'']
+};
+const returns = ['0 · succès','−1 · délai sans réponse','−2 · réponse mal formée','−3 · erreur retournée par le dragster','−4 · argument invalide','−5 · port série non prêt','−6 · erreur d’analyse de la réponse'];
+const protocolErrors = ['ERR 1 · commande inconnue','ERR 2 · mauvais argument','ERR 3 · mauvais état','ERR 4 · panne matérielle','ERR 5 · limite de sécurité'];
+const uart = {ping:'PING',echo:'SET_ECHO ON|OFF',purge:'PURGE',config:'GET_CONFIG',setConfig:'SET_CFG clé valeur',saveConfig:'SEND_CONFIG',start:'SET_CFG auto_duration_s puis START (contrat V5)',move:'MOVE_START tps pct',speed:'MOVE_SPEED pct',pause:'MOVE_PAUSE',neutral:'MOVE_STOP',stop:'STOP',tele:'GET_TELE',summary:'GET_BILAN'};
+const measuredNames = ['battery_current','motor_power','energy_wh','rpm_motor','soc_pct','accel_x/y/z','throttle_clamped'];
+const summaryNames = ['max_current_a','max_power_w','min_voltage_v','frame_count'];
+const $ = id => document.getElementById(id);
+const num = (v,d=2) => new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d}).format(v);
+const key = 'cec-api-v5-atelier-02';
+const questions = [
+  'Quel résultat valide la liaison ? Pourquoi relie-t-on TX à RX et les deux masses entre elles ?',
+  'Quelle valeur a été demandée, appliquée puis sauvegardée ? Pourquoi ?',
+  'Quelle différence observes-tu entre moveStop() et stop() ?',
+  'Pourquoi deux appels aux getters peuvent-ils afficher la même mesure ? Quelle distance lis-tu dans le bilan ?',
+  'Quand le STOP est externe, qui coupe le moteur et que doit faire ensuite le programme ?',
+  'Que vérifies-tu en premier avec −1 ? Qu’apprends-tu de plus si tu lis −3 et ERR 3 ?',
+  'Cite deux événements du journal qui prouvent que le départ attend la gâchette et que la session se termine normalement. Puis retrouve dans CecTriggerFlow les lignes qui traitent START, arrêtent le moteur et ferment la session.'
+];
+const faults = {
+  port:{title:'Port série non ouvert',action:'ping',code:-5,answers:['Initialiser le port série','Agrandir le diamètre','Relire la télémétrie'],correct:0},
+  silent:{title:'Liaison sans réponse',action:'ping',code:-1,answers:['Modifier la consigne moteur','Vérifier TX/RX, masse et débit','Sauvegarder la configuration'],correct:1},
+  state:{title:'Commande moteur hors session',action:'move',code:-3,answers:['Changer le diamètre de roue','Augmenter le délai sans vérifier le message','Ouvrir une session avant la commande moteur'],correct:2}
+};
+let lesson = {lab:0,done:{},notes:{},evidence:{}};
+let storage = true;
+try {
+  const old = JSON.parse(localStorage.getItem(key) || 'null');
+  if (old && typeof old === 'object') {
+    if (Number.isInteger(old.lab) && labs[old.lab]) lesson.lab = old.lab;
+    labs.forEach((lab,i) => {
+      if (old.done?.[i] === true) lesson.done[i] = true;
+      if (typeof old.notes?.[i] === 'string') lesson.notes[i] = old.notes[i].slice(0,1500);
+      if (Array.isArray(old.evidence?.[i])) lesson.evidence[i] = old.evidence[i].filter(x=>typeof x === 'string').slice(-12);
+    });
+  }
+} catch (error) { storage = false; }
+
+const initialConfig = () => ({wheel_diameter_mm:56,auto_duration_s:1,auto_throttle_pct:33,direction:0});
+function newBench(index) {
+  const link = index !== 0 && index !== 5;
+  const ready = index >= 1 && index <= 3;
+  return {
+    port:link,link,timeout:1500,latency:120,echo:false,config:initialConfig(),disk:initialConfig(),cache:null,
+    api:ready,handshake:ready,pending:'',startFlag:false,stopFlag:false,trigger:false,triggerRead:false,triggerAck:false,radioMs:0,
+    session:false,pct:0,ms:0,continuous:0,distance:0,energy:0,top:0,maxPower:0,frames:[],totalFrames:0,
+    tele:null,summary:null,loadedSummary:false,ended:'',ret:null,err:null,flags:{},times:[],changes:[],
+    caseId:'',diagnosed:{},diagObserved:false,diagRead:{},
+    events:[],values:[],kind:'',message:'Choisis une branche de l’arbre ou une action du banc.'
+  };
+}
+
+let bench = newBench(lesson.lab);
+let activeBranch = 0;
+let selected = '';
+let inputs = {};
+const nav = [];
+const refRows = [];
+
+function storeProgress() {
+  try { localStorage.setItem(key,JSON.stringify(lesson)); storage = true; }
+  catch (error) { storage = false; }
+  const text = storage ? 'Tes observations et tes ateliers réussis sont sauvegardés sur cet appareil.' : 'Sauvegarde locale indisponible. Télécharge ton bilan avant de fermer la page.';
+  if ($('save-info').textContent !== text) $('save-info').textContent = text;
+}
+
+function create(tag,text,cls) {
+  const element = document.createElement(tag);
+  if (text !== undefined) element.textContent = text;
+  if (cls) element.className = cls;
+  return element;
+}
+
+function button(text,handler,cls) {
+  const el = create('button',text,cls);
+  el.type = 'button';
+  el.addEventListener('click',handler);
+  return el;
+}
+
+function display(text,kind='',ret=null,err=null,lines=[]) {
+  bench.kind = kind;
+  bench.message = text;
+  bench.ret = ret;
+  bench.err = err;
+  bench.values = lines;
+  bench.events.push(text);
+  if (bench.events.length > 80) bench.events.shift();
+}
+
+function ok(text,lines=[]) { display(text,'good',0,null,lines); }
+
+function fail(ret,text,err=null) { display(text,'warn',ret,err); }
+
+function reportValue(name,value) { return [name,String(value)]; }
+
+function requireLink() {
+  if (!bench.port) { fail(-5,'Port série non prêt.'); return false; }
+  if (!bench.link || bench.timeout < bench.latency) { fail(-1,'Aucune réponse dans le délai.'); return false; }
+  return true;
+}
+
+function requireApi() {
+  if (!bench.api || !bench.handshake) { fail(-3,'Le dragster n’est pas prêt en mode API.',{code:3,text:'core not in API mode'}); return false; }
+  return true;
+}
+
+function requireSession() {
+  if (!bench.session) { fail(-3,'Session fermée. La commande demande une session ouverte.',{code:3,text:'session fermée'}); return false; }
+  return true;
+}
+
+function completeSession(reason) {
+  bench.summary = {
+    duration:bench.ms,maxSpeed:bench.top,average:bench.ms ? bench.distance/(bench.ms/1000) : 0,
+    distance:bench.distance,energy:bench.energy,maxPower:bench.maxPower,frames:bench.totalFrames
+  };
+  bench.session = false;
+  bench.pct = 0;
+  bench.api = false;
+  bench.handshake = false;
+  bench.ended = reason;
+  bench.loadedSummary = false;
+  if (reason === 'external') bench.pending = 'STOP';
+  else bench.pending = '';
+}
+
+function sample() {
+  const speed = 0.04 * bench.pct * bench.config.wheel_diameter_mm / 56;
+  const power = 0.6 * bench.pct;
+  return {t:bench.ms,speed,power,distance:bench.distance,voltage:7.4,energy:bench.energy,pct:bench.pct};
+}
+
+function advance(duration) {
+  let left = duration;
+  while (left > 0) {
+    const dt = Math.min(200,left);
+    left -= dt;
+    if (bench.trigger && !bench.ended) bench.radioMs += dt;
+    if (bench.session) {
+      const data = sample();
+      bench.ms += dt;
+      bench.distance += data.speed * dt / 1000;
+      bench.energy += data.power * dt / 3600000;
+      bench.top = Math.max(bench.top,data.speed);
+      bench.maxPower = Math.max(bench.maxPower,data.power);
+      if (bench.pct) bench.continuous += dt;
+      bench.frames.push(sample());
+      bench.totalFrames += 1;
+      if (bench.frames.length > 40) bench.frames.shift();
+    }
+    if (bench.triggerAck && !bench.ended && bench.radioMs >= 10000) {
+      completeSession('external');
+      display('Durée Max API atteinte. Le dragster coupe le moteur et envoie STOP.','warn');
+      return false;
+    }
+    if (!bench.trigger && bench.continuous >= 10000 && bench.pct) {
+      bench.pct = 0;
+      bench.continuous = 0;
+      fail(-3,'Mouvement continu coupé. La session reste ouverte.',{code:5,text:'move timeout'});
+      return false;
+    }
+  }
+  return true;
+}
+
+function addInput(name,title,items,initial) {
+  const label = create('label',title);
+  const select = create('select');
+  select.name = name;
+  for (const [value,text] of items) {
+    const option = create('option',text);
+    option.value = String(value);
+    select.append(option);
+  }
+  select.value = String(initial);
+  label.append(select);
+  $('params').append(label);
+  return select;
+}
+
+function addNumber(name,title,initial,min,max,step) {
+  const label = create('label',title);
+  const field = create('input');
+  field.type = 'number';
+  field.name = name;
+  field.required = true;
+  Object.assign(field,{value:initial,min,max,step});
+  label.append(field);
+  $('params').append(label);
+  return field;
+}
+
+function prepareInputs(id) {
+  $('params').replaceChildren();
+  inputs = {};
+  if (id === 'begin') {
+    inputs.wires = addInput('wires','Câblage',[
+      ['cross','D4 TX → RX et D2 RX ← TX'],
+      ['straight','D4 TX → TX et D2 RX ← RX']
+    ],'straight');
+    inputs.ground = addInput('ground','Masse',[['yes','GND commun'],['no','GND séparés']],'no');
+    inputs.baud = addInput('baud','Débit UART',[[9600,'9 600 bauds'],[115200,'115 200 bauds']],115200);
+  }
+  if (id === 'timeout') inputs.timeout = addNumber('timeout','Attente maximale (ms)',bench.timeout,100,5000,100);
+  if (id === 'configValue' || id === 'setConfig') {
+    inputs.key = addInput('key','Clé de configuration',Object.keys(configKeys).map(name=>[name,name]),'wheel_diameter_mm');
+    if (id === 'setConfig') {
+      inputs.value = addNumber('value','Valeur demandée',65,0,120,0.1);
+      inputs.key.addEventListener('change',()=>{inputs.value.value = bench.config[inputs.key.value];});
+    }
+  }
+  if (id === 'move' || id === 'speed') inputs.pct = addNumber('pct','Consigne moteur (%)',id === 'speed' ? 20 : 10,0,100,0.1);
+  if (id === 'pause' || id === 'neutral') inputs.delay = addNumber('delay','Attente côté Arduino (ms)',0,0,10000,1);
+  if (id === 'block') inputs.index = addNumber('index','Index (0 = plus récente)',1,0,40,1);
+}
+
+function getValues() {
+  return Object.fromEntries(Object.entries(inputs).map(([name,input])=>[name,input.type === 'number' ? input.valueAsNumber : input.value]));
+}
+
+function physical(id) {
+  if (id === 'api') {
+    bench = newBench(lesson.lab);
+    bench.api = true;
+    bench.pending = 'INIT';
+    display('Mode API demandé. Le dragster envoie INIT.');
+  } else if (id === 'radio') {
+    if (!bench.handshake || bench.trigger || bench.ended) {
+      display('Gâchette sans effet dans cet état. Le dragster attend READY ou un nouvel essai.','warn');
+    } else {
+      bench.trigger = true;
+      bench.pending = 'START';
+      display('Gâchette tirée. Le dragster envoie START.');
+    }
+  } else if (id === 'external') {
+    if (!bench.triggerAck || bench.ended) {
+      display('Arrêt externe indisponible. Le scénario attend un START acquitté.','warn');
+    } else {
+      bench.flags.externalUnderPower = bench.pct > 0;
+      completeSession('external');
+      display('Le dragster coupe le moteur et envoie STOP. Le bilan est calculé côté véhicule.','warn');
+    }
+  }
+  renderBench();
+}
+
+function simulate(id,v={}) {
+  if (id === 'begin') {
+    bench.port = true;
+    bench.link = v.wires === 'cross' && v.ground === 'yes' && Number(v.baud) === 9600;
+    display('Port ouvert. Utilise getInfoConnex() pour vérifier la liaison.');
+    return;
+  }
+  if (id === 'timeout') {
+    bench.timeout = v.timeout;
+    display('Délai de réponse réglé à ' + v.timeout + ' ms.');
+    return;
+  }
+  if (id === 'purge' || id === 'callbacks' || id === 'rawEstop' || id === 'rawRace') {
+    const refText = id === 'rawRace' ? 'Exemple de réponse GET_RACE donné par le guide' : actions[id][2];
+    const lines = id === 'rawRace' ? [reportValue('Exemple','state=RUNNING,error=NONE')] : [];
+    bench.kind = '';
+    bench.message = refText;
+    bench.values = lines;
+    bench.events.push(refText);
+    return;
+  }
+  if (id === 'errCode' || id === 'errText') {
+    if (bench.ret !== -3 || !bench.err) {
+      bench.kind = 'warn';
+      bench.message = 'Reproduis une erreur renvoyée par le dragster (−3) avant de consulter ce diagnostic.';
+    } else {
+      const value = id === 'errCode' ? 'ERR ' + bench.err.code : bench.err.text;
+      bench.message = value;
+      bench.values = [reportValue(id === 'errCode' ? 'Code protocole' : 'Message du banc',value)];
+      bench.diagRead[id] = true;
+      bench.events.push(value);
+    }
+    return;
+  }
+  if (id === 'tick') {
+    if (!bench.session && (!bench.trigger || bench.ended)) {
+      display('Aucune session ni course déclenchée à faire avancer.','warn');
+    } else if (advance(200)) {
+      display('Temps virtuel avancé de 200 ms.');
+    }
+    return;
+  }
+  if (id === 'ping') {
+    if (requireLink()) { bench.flags.ping = true; ok('PING → OK PONG. Liaison vérifiée.'); }
+    return;
+  }
+  if (!requireLink()) return;
+
+  switch (id) {
+    case 'echo':
+      bench.echo = !bench.echo;
+      display('SET_ECHO ' + (bench.echo ? 'ON · écho activé.' : 'OFF · écho désactivé.'));
+      break;
+    case 'config':
+      bench.cache = {...bench.config};
+      ok('Configuration reçue. Le cache a été actualisé.',Object.keys(configKeys).map(name=>reportValue(name,bench.cache[name])));
+      break;
+    case 'configValue': {
+      if (!bench.cache) { display('Le cache est vide. Demande la configuration avant de lire une clé.','warn'); break; }
+      const value = bench.cache[v.key];
+      if (v.key === 'wheel_diameter_mm' && value === 62 && value === bench.config[v.key]) bench.flags.readWheel = true;
+      const stale = value !== bench.config[v.key];
+      display(v.key + ' = ' + value + ' ' + configKeys[v.key][2] + (stale ? ' · valeur en cache avant modification.' : ' · valeur lue dans le cache.'),stale ? 'warn' : 'good');
+      break;
+    }
+    case 'setConfig': {
+      const [min,max,unit] = configKeys[v.key];
+      if (v.key === 'direction') { display('direction reste à 0 dans ce banc. Cette clé est fixe.'); break; }
+      if (v.key !== 'wheel_diameter_mm' && (v.value < min || v.value > max)) { fail(-4,'Valeur hors de la plage de cet exercice.'); break; }
+      const value = Math.min(max,Math.max(min,v.value));
+      bench.config[v.key] = value;
+      if (v.key === 'wheel_diameter_mm') {
+        bench.flags.requestWheel = v.value === 65;
+        bench.flags.readWheel = false;
+      }
+      ok('Valeur demandée ' + num(v.value) + ' ' + unit + ' · valeur appliquée ' + num(value) + ' ' + unit + '.');
+      break;
+    }
+    case 'saveConfig':
+      bench.disk = {...bench.config};
+      ok('Configuration sauvegardée sur la carte SD simulée.');
+      break;
+    case 'poll': {
+      const signal = bench.pending;
+      bench.pending = '';
+      if (signal === 'INIT') { bench.handshake = true; display('INIT traité. La bibliothèque répond READY.','good'); }
+      else if (signal === 'START') { bench.triggerAck = true; bench.startFlag = true; display('START traité. La bibliothèque répond START_ACK.','good'); }
+      else if (signal === 'STOP') { bench.stopFlag = true; display('STOP traité. La bibliothèque répond STOP_ACK.','good'); }
+      else display('Aucun événement en attente.');
+      break;
+    }
+    case 'takeStart':
+      if (bench.startFlag) {
+        bench.startFlag = false;
+        bench.triggerRead = true;
+        display('takeStartTrigger() → true. Le départ est à traiter dans le programme.','good');
+      } else display('takeStartTrigger() → false. Aucun nouveau START traité.','warn');
+      break;
+    case 'takeStop':
+      if (bench.stopFlag) {
+        bench.stopFlag = false;
+        bench.flags.stopRead = true;
+        display('takeStopTrigger() → true. Le programme doit quitter sa boucle de course.','good');
+      } else display('takeStopTrigger() → false. Aucun nouveau STOP traité.','warn');
+      break;
+    case 'start':
+      if (!requireApi()) break;
+      if (bench.session) { fail(-3,'Une session est déjà ouverte.',{code:3,text:'session déjà ouverte'}); break; }
+      if (bench.trigger && !bench.triggerRead) { fail(-3,'Dans ce scénario, lis START avant d’ouvrir la session.',{code:3,text:'START non lu dans le scénario'}); break; }
+      bench.session = true;
+      bench.frames = [sample()];
+      bench.totalFrames = 1;
+      ok('Session ouverte. Moteur au neutre.');
+      break;
+    case 'move':
+    case 'speed':
+      if (!requireApi() || !requireSession()) break;
+      if (id === 'speed' && !bench.pct) { fail(-3,'Le moteur est au neutre. Démarre-le avant de modifier sa consigne.',{code:3,text:'mouvement inactif dans le banc'}); break; }
+      bench.pct = v.pct;
+      if (id === 'move') {
+        bench.continuous = 0;
+        if (v.pct > 0 && bench.flags.paused) bench.flags.resumed = true;
+      } else if (v.pct > 0) bench.flags.changedSpeed = true;
+      if (v.pct > 0 && !bench.changes.includes(v.pct)) bench.changes.push(v.pct);
+      ok('Consigne moteur demandée · ' + num(v.pct) + ' %. La vitesse mesurée se lit dans la télémétrie.');
+      break;
+    case 'pause':
+    case 'neutral':
+      if (!requireSession()) break;
+      if (!advance(v.delay)) break;
+      if (id === 'pause' && bench.pct > 0) bench.flags.paused = true;
+      if (id === 'neutral') bench.flags.neutral = true;
+      bench.pct = 0;
+      bench.continuous = 0;
+      ok((id === 'pause' ? 'Pause moteur.' : 'Moteur arrêté.') + ' La session reste ouverte.');
+      break;
+    case 'stop':
+      if (!bench.session) { display('Aucune session active dans ce banc.','warn'); break; }
+      completeSession('normal');
+      display('Session fermée. Le bilan est calculé et la course est sauvegardée dans le banc virtuel.','good');
+      break;
+    case 'tele':
+      if (!bench.session || !bench.frames.length) { display('Ouvre une session pour obtenir une mesure dans ce banc.','warn'); break; }
+      bench.tele = bench.frames.at(-1);
+      bench.flags.tele = true;
+      ok('Mesure chargée à ' + bench.tele.t + ' ms. Tu peux maintenant lire ses valeurs.');
+      break;
+    case 'teleValues':
+    case 'teleStructure': {
+      const m = bench.tele;
+      if (!m) { display('Aucune mesure chargée. Acquiers une mesure ou relis l’historique.','warn'); break; }
+      if (!bench.times.includes(m.t)) bench.times.push(m.t);
+      const fields = id === 'teleValues' ? teleFields.map(([name,unit,,f])=>reportValue(name,f(m)+' '+unit)) :
+        [reportValue('battery_current',num(m.power/m.voltage)+' A'),reportValue('motor_power',num(m.power)+' W'),reportValue('energy_wh',num(m.energy,4)+' Wh'),reportValue('rpm_motor',Math.round(100*m.pct)+' tr/min'),reportValue('soc_pct','86 %'),reportValue('accel_x/y/z','0 / 0 / 0 m/s²'),reportValue('throttle_clamped',num(m.pct)+' %')];
+      const older = m.t < bench.ms;
+      display(older ? 'Mesure en cache · ' + m.t + ' ms. Le banc est à ' + bench.ms + ' ms.' : 'Lecture de la mesure à ' + m.t + ' ms.',older ? 'warn' : 'good',null,null,fields);
+      break;
+    }
+    case 'count':
+      display(bench.frames.length + ' mesure(s) disponible(s) dans l’historique du banc.');
+      break;
+    case 'block': {
+      if (!bench.session) { display('Fais la relecture de l’historique pendant la session API dans cet atelier.','warn'); break; }
+      const index = v.index === 0 ? bench.frames.length - 1 : v.index - 1;
+      if (!bench.frames[index]) { display('Cet index est absent de l’historique du banc.','warn'); break; }
+      bench.tele = bench.frames[index];
+      if (v.index === 1) bench.flags.oldest = true;
+      display('Mesure de l’historique chargée · ' + bench.tele.t + ' ms.');
+      break;
+    }
+    case 'summary':
+      if (bench.ended !== 'normal') { display('Pour cet exercice, lis le bilan après une fin normale avec stop().','warn'); break; }
+      bench.loadedSummary = true;
+      ok('Bilan chargé. Les getters sont disponibles.');
+      break;
+    case 'summaryValues':
+    case 'summaryStructure': {
+      if (!bench.loadedSummary) { display('Charge le bilan avec getBilan() avant de lire ses valeurs.','warn'); break; }
+      const b = bench.summary;
+      bench.flags.readSummary = true;
+      const fields = id === 'summaryValues' ? summaryFields.map(([name,unit,,f])=>reportValue(name,f(b)+' '+unit)) :
+        [reportValue('max_current_a',num(b.maxPower/7.4)+' A'),reportValue('max_power_w',num(b.maxPower)+' W'),reportValue('min_voltage_v','7,4 V'),reportValue('frame_count',b.frames)];
+      display('Bilan de l’essai terminé. Les valeurs sont simulées.','good',null,null,fields);
+      break;
+    }
+  }
+}
+
+function run(id) {
+  simulate(id,getValues());
+  if (lesson.lab === 5 && bench.caseId && id === faults[bench.caseId].action) {
+    bench.diagObserved = bench.ret === faults[bench.caseId].code;
+    bench.diagRead = {};
+  }
+  if (lesson.lab === 5) $('check-diagnosis').disabled = !bench.diagObserved;
+  renderBench();
+}
+
+function proof() {
+  const f = bench.flags;
+  const closed = bench.ended === 'normal';
+  switch (lesson.lab) {
+    case 0: return f.ping;
+    case 1: return f.requestWheel && f.readWheel && bench.disk.wheel_diameter_mm === 62;
+    case 2: return closed && f.changedSpeed && f.paused && f.resumed && f.neutral && bench.changes.includes(10) && bench.changes.includes(20);
+    case 3: return closed && f.neutral && f.tele && bench.times.length >= 2 && f.oldest && f.readSummary && bench.ms === 2000 && bench.changes.includes(10);
+    case 4: return bench.ended === 'external' && f.externalUnderPower && f.stopRead;
+    case 5: return Object.keys(bench.diagnosed).length === 3;
+    case 6: return closed && bench.triggerRead && f.tele && f.neutral && f.readSummary && bench.ms === 2000 && bench.changes.length === 1 && bench.changes[0] === 10;
+  }
+}
+
+function renderBench() {
+  $('api').textContent = bench.handshake ? 'Mode API · READY' : bench.api ? 'Mode API · en attente' : 'Hors mode API';
+  $('motor').textContent = bench.pct ? 'Consigne · ' + num(bench.pct) + ' %' : 'Moteur au neutre';
+  $('motor').dataset.on = String(bench.pct > 0);
+  $('session').textContent = bench.session ? 'Session ouverte' : 'Session fermée';
+  $('clock').textContent = bench.pending ? bench.pending + ' en attente · ' + bench.ms + ' ms' : bench.ms + ' ms · temps de session';
+  $('result').dataset.kind = bench.kind;
+  const prefix = bench.ret === null ? '' : 'Retour ' + String(bench.ret).replace('-','−') + ' · ';
+  $('result').textContent = prefix + bench.message;
+  $('values').replaceChildren(...bench.values.map(([label,value]) => {
+    const row = create('div');
+    row.append(create('dt',label),create('dd',value));
+    return row;
+  }));
+  $('events').replaceChildren(...(bench.events.length ? bench.events.slice(-24) : ['Le journal apparaîtra ici après le premier essai.']).map(text=>create('li',text)));
+  if (proof() && !lesson.done[lesson.lab]) {
+    lesson.done[lesson.lab] = true;
+    lesson.evidence[lesson.lab] = bench.events.slice(-12);
+    storeProgress();
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  nav.forEach((item,i)=>{
+    item.button.dataset.done = String(!!lesson.done[i]);
+    item.state.textContent = lesson.done[i] ? 'Essai validé' : 'À essayer';
+    if (lesson.lab === i) item.button.setAttribute('aria-current','step');
+    else item.button.removeAttribute('aria-current');
+  });
+  const count = Object.keys(lesson.done).length;
+  const text = count + ' atelier(s) validé(s) sur ' + labs.length + ' · Tes notes et validations restent quand tu changes d’atelier.';
+  if ($('progress-summary').textContent !== text) $('progress-summary').textContent = text;
+  const done = !!lesson.done[lesson.lab];
+  $('lab-proof').dataset.done = String(done);
+  const status = done ? 'Essai validé. Explique ce que tu as observé dans ton bilan.' : 'À vérifier · ' + labs[lesson.lab].objective;
+  if ($('lab-proof').textContent !== status) $('lab-proof').textContent = status;
+}
+
+function diagnose(id) {
+  const previous = bench.diagnosed;
+  bench = newBench(5);
+  bench.diagnosed = previous;
+  bench.caseId = id;
+  bench.port = id !== 'port';
+  bench.link = id === 'state';
+  bench.api = id === 'state';
+  bench.handshake = id === 'state';
+  $('diagnosis-answer').replaceChildren(...['Choisis ta première vérification',...faults[id].answers].map((text,index)=>{
+    const el = create('option',text);
+    el.value = index ? String(index - 1) : '';
+    return el;
+  }));
+  $('diagnosis-answer').value = '';
+  $('check-diagnosis').disabled = true;
+  display(faults[id].title + ' · Exécute la commande de ce scénario pour observer son retour.');
+  renderBench();
+}
+
+function checkDiagnosis() {
+  const scenario = faults[bench.caseId];
+  if (!scenario || !bench.diagObserved) return;
+  const answer = $('diagnosis-answer').value;
+  if (!answer) {
+    bench.message = 'Choisis une première vérification.';
+    bench.kind = 'warn';
+  } else if (bench.caseId === 'state' && (!bench.diagRead.errCode || !bench.diagRead.errText)) {
+    bench.message = 'Après le retour −3, lis le code protocole et le message associé.';
+    bench.kind = 'warn';
+  } else if (Number(answer) === scenario.correct) {
+    bench.diagnosed[bench.caseId] = true;
+    bench.message = 'Diagnostic validé pour ce cas · ' + Object.keys(bench.diagnosed).length + '/3.';
+    bench.kind = 'good';
+    bench.events.push(scenario.title + ' → ' + scenario.answers[scenario.correct]);
+  } else {
+    bench.message = 'Repars du retour observé. Choisis une vérification qui correspond à ce niveau de panne.';
+    bench.kind = 'warn';
+  }
+  renderBench();
+}
+
+function benchControls() {
+  const controls = $('bench-controls');
+  controls.replaceChildren();
+  if (lesson.lab === 4 || lesson.lab === 6) {
+    controls.append(button('Passer en mode API',()=>physical('api'),'soft'),button('Tirer la gâchette',()=>physical('radio'),'soft'));
+    if (lesson.lab === 4) controls.append(button('Déclencher un STOP externe',()=>physical('external'),'soft'));
+  }
+  if (lesson.lab === 5) {
+    const wrap = create('div',undefined,'params');
+    const label = create('label','Panne à reproduire');
+    const select = create('select');
+    for (const [id,scenario] of Object.entries(faults)) {
+      const option = create('option',scenario.title);
+      option.value = id;
+      select.append(option);
+    }
+    select.value = 'port';
+    select.addEventListener('change',()=>diagnose(select.value));
+    label.append(select);
+    const labelAnswer = create('label','Première vérification');
+    const answer = create('select');
+    answer.id = 'diagnosis-answer';
+    labelAnswer.append(answer);
+    wrap.append(label,labelAnswer);
+    const check = button('Vérifier le diagnostic',checkDiagnosis,'soft');
+    check.id = 'check-diagnosis';
+    controls.append(wrap,check);
+    diagnose('port');
+  }
+}
+
+function selectAction(id) {
+  selected = id;
+  for (const node of $('nodes').children) node.setAttribute('aria-pressed',String(node.dataset.action === id));
+  $('action-panel').hidden = false;
+  $('action-title').textContent = actions[id][0];
+  $('action-code').textContent = actions[id][1];
+  $('why-text').textContent = actions[id][3];
+  $('why').open = false;
+  prepareInputs(id);
+  $('do-action').textContent = ['purge','callbacks','rawRace','rawEstop'].includes(id) ? 'Lire le repère' : 'Exécuter sur le banc';
+}
+
+function renderTree() {
+  const lab = labs[lesson.lab];
+  $('root-title').textContent = lab.section;
+  $('root-note').textContent = lab.objective;
+  $('branches').replaceChildren(...lab.groups.map(([name],i)=>{
+    const control = button(name,()=>{
+      activeBranch = i;
+      selected = '';
+      renderTree();
+      $('branches').children[i].focus();
+    });
+    control.setAttribute('aria-controls','nodes');
+    control.setAttribute('aria-expanded',String(i === activeBranch));
+    return control;
+  }));
+  $('nodes').replaceChildren(...lab.groups[activeBranch][1].map(id=>{
+    const [name,code,short] = actions[id];
+    const node = button('',()=>selectAction(id));
+    node.dataset.action = id;
+    node.setAttribute('aria-pressed',String(selected === id));
+    node.append(create('strong',name),create('code',code),create('span',short));
+    return node;
+  }));
+  $('action-panel').hidden = !selected;
+}
+
+function openLab(index,focus=false) {
+  if (index !== lesson.lab || focus) {
+    bench = newBench(index);
+    selected = '';
+    activeBranch = 0;
+  }
+  lesson.lab = index;
+  const lab = labs[index];
+  $('lab-pages').textContent = 'Atelier ' + (index+1) + ' · Guide CeC ' + lab.pages;
+  $('lab-title').textContent = lab.title + ' · ' + lab.section;
+  $('lab-mission').textContent = lab.mission;
+  $('lab-hint-text').textContent = lab.hints;
+  $('lab-hint').open = false;
+  $('journal').open = false;
+  $('question').textContent = questions[index];
+  $('response').value = lesson.notes[index] || '';
+  $('export-info').textContent = '';
+  $('prev').disabled = index === 0;
+  $('next').disabled = index === labs.length-1;
+  renderTree();
+  benchControls();
+  renderBench();
+  storeProgress();
+  if (focus) $('lab-title').focus();
+}
+
+function reset() {
+  bench = newBench(lesson.lab);
+  if (lesson.lab === 5) benchControls();
+  if (selected) prepareInputs(selected);
+  renderBench();
+}
+
+const entry = (title,body) => {
+  const node = create('details',undefined,'ref-entry');
+  const summary = create('summary');
+  summary.append(create('code',title));
+  node.append(summary,create('p',body));
+  refRows.push({node,text:title+' '+body});
+  return node;
+};
+for (const [id,[name,code,short,why]] of Object.entries(actions)) {
+  entry(code,name + ' · ' + short + ' ' + why + (uart[id] ? ' UART · ' + uart[id] + '.' : ''));
+}
+for (const [name,unit,label] of [...teleFields,...summaryFields]) entry('cec.'+name,label + ' · ' + unit + '.');
+for (const name of measuredNames) entry('cec.telemetry().'+name,'Champ de la structure de télémétrie décrit p. 7. Le simulateur propose une lecture groupée.');
+for (const name of summaryNames) entry('cec.bilan().'+name,'Champ de la structure du bilan décrit p. 7. Le simulateur propose une lecture groupée.');
+entry('cec.onInit()','Rappel associé à INIT. Garde-le court et traite les commandes depuis loop().');
+entry('cec.onStart()','Rappel associé à START. Garde-le court et traite les commandes depuis loop().');
+entry('cec.onStop()','Rappel associé à STOP. Garde-le court et traite les commandes depuis loop().');
+entry('CECArduinoLib cec(cecSerial, &Serial);','Constructeur avec port de débogage facultatif. Le guide utilise cecSerial.begin(9600) vers le dragster et Serial.begin(115200) vers le moniteur série.');
+entry('SoftwareSerial cecSerial(2, 4);','UNO D2 reçoit depuis GPIO 43. UNO D4 émet vers GPIO 44. Relie les GND. Le module décrit dans le guide intègre l’adaptation 5 V.');
+entry('Codes de retour de la bibliothèque',returns.join(' · ')+'. Le guide indique aussi certaines méthodes void, notamment setEcho(), purge() et stop().');
+entry('Codes ERR du dragster',protocolErrors.join(' · ')+'. Un retour −3 permet de consulter le code protocole et le message.');
+entry('Durée Max API','Valeur par défaut 10 s. À la gâchette, le délai part du START. Hors flux à la gâchette, la limite coupe seulement le mouvement continu et la session reste ouverte.');
+entry('Attente de réponse aux triggers','Le guide indique que l’écran affiche « Pas de contrôleur actif » sans réponse dans les deux secondes. Le simulateur sépare les événements pour les observer pas à pas.');
+entry('CecTriggerFlow','Exemple fourni avec CECArduinoLib. Le guide présente un essai de 2 s à 10 % avec lecture de télémétrie environ toutes les 200 ms et traitement de STOP.');
+entry('Configuration V5','wheel_diameter_mm influe sur vitesse et distance dans tous les modes. auto_duration_s et auto_throttle_pct règlent le mode AUTO. direction reste fixe à 0. Le guide renvoie au README pour les autres clés.');
+$('ref-items').append(...refRows.map(row=>row.node));
+const normalize = value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+$('ref-search').addEventListener('input',event=>{
+  const term = normalize(event.target.value.trim());
+  let count = 0;
+  for (const row of refRows) {
+    row.node.hidden = !normalize(row.text).includes(term);
+    if (!row.node.hidden) count++;
+  }
+  $('ref-count').textContent = count + ' entrée(s) trouvée(s).';
+});
+
+labs.forEach((lab,i)=>{
+  const item = button('',()=>{if (i !== lesson.lab) openLab(i,true);});
+  const number = create('small',String(i+1).padStart(2,'0'));
+  const name = create('strong',lab.title);
+  const state = create('small','À essayer');
+  item.append(number,name,state);
+  $('labnav').append(item);
+  nav.push({button:item,state});
+});
+$('action-form').addEventListener('submit',event=>{
+  event.preventDefault();
+  if (selected) run(selected);
+});
+$('restart').addEventListener('click',reset);
+$('prev').addEventListener('click',()=>openLab(lesson.lab-1,true));
+$('next').addEventListener('click',()=>openLab(lesson.lab+1,true));
+$('response').addEventListener('input',event=>{lesson.notes[lesson.lab]=event.target.value;storeProgress();});
+$('export').addEventListener('click',()=>{
+  const lines = ['Course en Cours · Maîtriser l’API Arduino V5'];
+  labs.forEach((lab,index)=>{
+    lines.push('',(index+1)+'. '+lab.section,lesson.done[index] ? 'Essai validé' : 'À poursuivre',questions[index],lesson.notes[index]?.trim() || 'Observation à compléter.');
+    if (lesson.evidence[index]?.length) lines.push('Extrait du journal',...lesson.evidence[index]);
+  });
+  const url = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}));
+  const link = create('a');
+  link.href=url;
+  link.download='Bilan_Course_en_Cours_API_V5.txt';
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  $('export-info').textContent = 'Bilan préparé. Consulte tes téléchargements.';
+});
+openLab(lesson.lab);
+</script>
+</body>
+</html>
